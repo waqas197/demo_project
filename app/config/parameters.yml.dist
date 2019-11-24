@@ -15,5 +15,8 @@ parameters:
     mailer_user: ~
     mailer_password: ~
 
+    picture_directory: '%kernel.project_dir%/web/uploads/pictures'
+    supported_image_types: ["jpg", "png", "jpeg"]
+
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
