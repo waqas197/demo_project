@@ -2,6 +2,7 @@
 
 namespace ContactBundle\Services;
 
+use ContactBundle\Controller\ContactApiController;
 use ContactBundle\Controller\ContactController;
 use ContactBundle\Entity\Contact;
 use ContactBundle\Repository\ContactRepository;
@@ -62,6 +63,65 @@ class ContactService
                 ContactController::DATA => "Contact creating failed"
             ];
         }
+    }
+
+    /**
+     * This method delete image if exists with record
+     * return error if image not able to delete
+     *
+     * @param int $id
+     * @return array
+     */
+    public function delete(int $id): array
+    {
+        $contact = $this->contactRepository->find($id);
+        if ($contact == null) {
+
+            return [
+                ContactApiController::STATUS => JsonResponse::HTTP_NOT_FOUND,
+                ContactApiController::DATA => "Contact not found"
+            ];
+        }
+
+        if ($contact->getPicture()) {
+            $pictureStatus = $this->fileUploaderService->delete($contact->getPicture());
+            if ($pictureStatus[ContactApiController::STATUS] == JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
+
+                return $pictureStatus;
+            }
+        }
+
+        $response = $this->contactRepository->delete($contact);
+        if ($response) {
+
+            return [
+                ContactController::STATUS => JsonResponse::HTTP_OK,
+                ContactController::DATA => "Contact deleted successfully"
+            ];
+        } else {
+
+            return [
+                ContactController::STATUS => JsonResponse::HTTP_FORBIDDEN,
+                ContactController::DATA => "Contact deleting failed"
+            ];
+        }
+
+    }
+
+    /**
+     * This method search and response result in array
+     *
+     * @param array $search
+     * @return array
+     */
+    public function search(array $search): array
+    {
+        $contact = $this->contactRepository->search($search);
+
+        return [
+            ContactApiController::STATUS => JsonResponse::HTTP_OK,
+            ContactApiController::DATA => $contact
+        ];
     }
 
 }

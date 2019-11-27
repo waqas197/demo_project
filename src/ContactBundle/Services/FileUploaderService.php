@@ -19,6 +19,16 @@ class FileUploaderService
 {
 
     /**
+     * Parameter for picture directory path
+     */
+    const PICTURE_DIR_PARAM = 'picture_directory';
+
+    /**
+     * Parameter for supported image types
+     */
+    const IMG_TYPE_PARAM = 'supported_image_types';
+
+    /**
      * @var ContainerInterface
      */
     private $container;
@@ -48,7 +58,7 @@ class FileUploaderService
      */
     public function upload(UploadedFile $file): array
     {
-        $supportedImageTypes = $this->container->getParameter("supported_image_types");
+        $supportedImageTypes = $this->container->getParameter(self::IMG_TYPE_PARAM);
         if (!\in_array($file->guessExtension(), $supportedImageTypes)) {
 
             return [
@@ -59,7 +69,7 @@ class FileUploaderService
 
         $fileName = \uniqid() . '.' . $file->guessExtension();
         try {
-            $targetDirectory = $this->container->getParameter("picture_directory");
+            $targetDirectory = $this->container->getParameter(self::PICTURE_DIR_PARAM);
             $file->move($targetDirectory, $fileName);
 
             return [
@@ -73,6 +83,32 @@ class FileUploaderService
                 ContactController::DATA => $e->getMessage()
             ];
         }
+    }
+
+
+    /**
+     *
+     *
+     * @param $picture
+     * @return array
+     */
+    public function delete($picture): array
+    {
+        try {
+            $file = new Filesystem();
+            $path = $this->container->getParameter(self::PICTURE_DIR_PARAM) . "/" . $picture;
+            $file->remove($path);
+            return [
+                ContactController::STATUS => JsonResponse::HTTP_OK,
+                ContactController::DATA => "File removed"
+            ];
+        } catch (FileException $e) {
+            return [
+                ContactController::STATUS => JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
+                ContactController::DATA => $e->getMessage()
+            ];
+        }
+
     }
 
 }

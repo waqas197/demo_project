@@ -1,0 +1,52 @@
+{% extends "base.html.twig" %}
+{% block title %}
+    Search {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid text-center">
+        <div class="row content">
+            <div class="col-sm-1">&nbsp;</div>
+
+            <div class="col-sm-10 text-left">
+                <h1>Search Contact</h1>
+                <hr>
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="contactName">Name (i.e First Name, Last Name)</label>
+                            <input type="text" class="form-control" id="contactName" placeholder="Name">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="contactEmail">Email ID</label>
+                            <input type="text" class="form-control" id="contactEmail" placeholder="Email ID">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="contactAddress">Address (i.e street, postal, city, country)</label>
+                            <input type="text" class="form-control" id="contactAddress" placeholder="Address">
+                        </div>
+                    </div>
+                </form>
+
+                <span class="mt-1">&nbsp;</span>
+
+                <h2 class="mt-5 pt-5">Search Results</h2>
+                <hr >
+
+                <div id="searchResults"></div>
+
+            </div>
+
+            <div class="col-sm-1">&nbsp;</div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            searchContact();
+        });
+    </script>
+
+{% endblock %}
+

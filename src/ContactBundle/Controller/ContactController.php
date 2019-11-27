@@ -6,14 +6,12 @@ use ContactBundle\Entity\Contact;
 use ContactBundle\Form\ContactType;
 use ContactBundle\Services\ContactService;
 use ContactBundle\Services\FileUploaderService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-
 
 /**
  * @Route("/contact")
@@ -47,6 +45,18 @@ class ContactController extends Controller
     public const PICTURE = 'picture';
 
     /**
+     * Template for add contact
+     */
+    public const ADD_CONTACT_TEMPLATE = '@AddressBookContact/addContact.html.twig';
+
+    /**
+     * Template for search contact
+     */
+    public const SEARCH_CONTACT_TEMPLATE = '@AddressBookContact/searchContact.html.twig';
+
+
+
+    /**
      * @Route("/add", methods={"GET", "POST"}, name="add_contact")
      *
      * @param Request $request
@@ -74,7 +84,7 @@ class ContactController extends Controller
                 } else {
                     $this->addFlash(self::ERROR, $response[self::DATA]);
 
-                    return $this->render('@AddressBookContact/addContact.html.twig', [
+                    return $this->render(self::ADD_CONTACT_TEMPLATE, [
                         'form' => $contactForm->createView(),
                     ]);
                 }
@@ -91,9 +101,19 @@ class ContactController extends Controller
             return $this->redirectToRoute('add_contact');
         }
 
-        return $this->render('@AddressBookContact/addContact.html.twig', [
+        return $this->render(self::ADD_CONTACT_TEMPLATE, [
             'form' => $contactForm->createView(),
         ]);
 
+    }
+
+    /**
+     * @Route("/search", methods={"GET"}, name="search_contact")
+     * @param ContactService $contactService
+     * @return Response
+     */
+    public function searchAction(ContactService $contactService): Response
+    {
+        return $this->render(self::SEARCH_CONTACT_TEMPLATE);
     }
 }

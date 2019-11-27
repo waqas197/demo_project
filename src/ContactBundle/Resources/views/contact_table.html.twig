@@ -1,0 +1,44 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Picture</th>
+        <th scope="col">Name</th>
+        <th scope="col">Adress</th>
+        <th scope="col">Phone No.</th>
+        <th scope="col">Date of Birth</th>
+        <th scope="col">Email ID</th>
+        <th scope="col">Edit</th>
+        <th scope="col">Delete</th>
+    </tr>
+    </thead>
+
+
+    {% for contact in contacts %}
+
+        <tbody>
+        <tr id="{{ contact.id }}">
+            <td>
+                {% if contact.picture %}
+                    <img src="{{ asset('uploads/pictures/' ~ contact.picture) }}" width="80"/>
+                {% else %}
+                    <img src="{{ asset('uploads/pictures/no-image.jpg') }}" width="80"/>
+                {% endif %}
+            </td>
+            <td>{{ contact.firstName }} &nbsp; {{ contact.lastName }}</td>
+            <td>{{ contact.street }} &nbsp; {{ contact.zip }} &nbsp; {{ contact.city }}
+                &nbsp; {{ contact.country }}</td>
+            <td>{{ contact.phoneNumber }}</td>
+            <td>{{ contact.dateOfBirth|date("d.m.Y") }}</td>
+            <td>{{ contact.emailAddress }}</td>
+            <td><a href="contact/edit/{{ contact.id }}">Edit</a></td>
+            <td><a class='delete btn btn-danger' href="#" onclick="deleteContact({{ contact.id }})">Delete</a></td>
+        </tr>
+        </tbody>
+
+    {% else %}
+        <tr>
+            <td colspan="8" align="center">No Contact Found!</td>
+        </tr>
+    {% endfor %}
+
+</table>

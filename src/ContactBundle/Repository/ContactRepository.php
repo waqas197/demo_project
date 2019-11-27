@@ -2,6 +2,7 @@
 
 namespace ContactBundle\Repository;
 
+use ContactBundle\Controller\ContactApiController;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use ContactBundle\Entity\Contact;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -23,6 +24,12 @@ class ContactRepository extends ServiceEntityRepository
         parent::__construct($registry, Contact::class);
     }
 
+    /**
+     * This method add entity into DB
+     *
+     * @param Contact $contact
+     * @return bool
+     */
     public function create(Contact $contact): bool
     {
         try {
@@ -34,6 +41,58 @@ class ContactRepository extends ServiceEntityRepository
 
             return false;
         }
+    }
+
+    /**
+     * This method delete contact from DB
+     *
+     * @param Contact $contact
+     * @return bool
+     */
+    public function delete(Contact $contact): bool
+    {
+        try {
+            $this->_em->remove($contact);
+            $this->_em->flush($contact);
+
+            return true;
+        } catch (\Doctrine\ORM\ORMException | \Exception | \Doctrine\ORM\OptimisticLockException $e) {
+
+            return false;
+        }
+    }
+
+    /**
+     * This method search the record from Contact and return in array format
+     *
+     * @param array $search
+     * @return array
+     */
+    public function search(array $search): array
+    {
+
+        $query = $this->_em->createQueryBuilder()->select('c')
+            ->from('AddressBookContactBundle:Contact', 'c');
+
+        if ($search[ContactApiController::NAME]) {
+            $query = $query
+                ->andWhere('c.firstName LIKE :contactName OR c.lastName LIKE :contactName')
+                ->setParameter(ContactApiController::NAME, '%' . $search[ContactApiController::NAME] . '%');
+        }
+
+        if ($search[ContactApiController::ADDRESS]) {
+            $query = $query
+                ->andWhere('c.street LIKE :contactAddress OR c.zip LIKE :contactAddress OR c.city LIKE :contactAddress OR c.country LIKE :contactAddress')
+                ->setParameter(ContactApiController::ADDRESS, '%' . $search[ContactApiController::ADDRESS] . '%');
+        }
+
+        if ($search[ContactApiController::EMAIL]) {
+            $query = $query
+                ->andWhere('c.emailAddress LIKE :contactEmail')
+                ->setParameter(ContactApiController::EMAIL, '%' . $search[ContactApiController::EMAIL] . '%');
+        }
+
+        return $query->getQuery()->getArrayResult();
     }
 
 }
