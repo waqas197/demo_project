@@ -69,7 +69,7 @@ function searchContact() {
     });
 }
 
-function deleteContact(id) {
+function deleteContact(id, action) {
     var result = confirm("Are you sure you want to delete this record?");
     if (result) {
         $.ajax({
@@ -77,6 +77,36 @@ function deleteContact(id) {
             type: 'DELETE',
             success: function (result) {
                 $('#' + id).hide("slow");
+                new PNotify({
+                    title: 'Success',
+                    text: result,
+                    type: 'success'
+                });
+                if (action != '') {
+                    $(location).attr('href',action);
+                }
+            },
+            error:
+                function (result) {
+                    new PNotify({
+                        title: 'Error',
+                        text: result.responseJSON,
+                        type: 'error'
+                    });
+                }
+        });
+    }
+}
+
+function removeImage(id) {
+    var result = confirm("Are you sure you want to delete image?");
+    if (result) {
+        $.ajax({
+            url: "/api/contact/delete/picture/" + id,
+            type: 'DELETE',
+            success: function (result) {
+                $("#img-"+id).attr("src","/uploads/pictures/no-image.jpg");
+                $('#img-remove-link-' + id).hide("slow");
                 new PNotify({
                     title: 'Success',
                     text: result,

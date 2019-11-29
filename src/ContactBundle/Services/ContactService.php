@@ -47,27 +47,38 @@ class ContactService
      * @param Contact $contact
      * @return array
      */
-    public function create(Contact $contact): array
+    public function createOrUpdate(Contact $contact): array
     {
-        $response = $this->contactRepository->create($contact);
+        $response = $this->contactRepository->createOrUpdate($contact);
         if ($response) {
 
             return [
                 ContactController::STATUS => JsonResponse::HTTP_CREATED,
-                ContactController::DATA => "Contact created successfully"
+                ContactController::DATA => "Success"
             ];
         } else {
 
             return [
                 ContactController::STATUS => JsonResponse::HTTP_FORBIDDEN,
-                ContactController::DATA => "Contact creating failed"
+                ContactController::DATA => "Operation failed!"
             ];
         }
     }
 
     /**
-     * This method delete image if exists with record
-     * return error if image not able to delete
+     * This method used to get entity by ID
+     *
+     * @param int $id
+     * @return object|null
+     */
+    public function get(int $id)
+    {
+        return $this->contactRepository->find($id);
+    }
+
+    /**
+     * This method delete image if exists in contact
+     * return error if image not able to delete or remove entity
      *
      * @param int $id
      * @return array
@@ -103,6 +114,50 @@ class ContactService
             return [
                 ContactController::STATUS => JsonResponse::HTTP_FORBIDDEN,
                 ContactController::DATA => "Contact deleting failed"
+            ];
+        }
+
+    }
+
+    /**
+     * This method used to delete image and update contact entity
+     *
+     * @param int $id
+     * @return array
+     */
+    public function deletePicture(int $id): array
+    {
+        $contact = $this->contactRepository->find($id);
+        if ($contact == null) {
+
+            return [
+                ContactApiController::STATUS => JsonResponse::HTTP_NOT_FOUND,
+                ContactApiController::DATA => "Contact not found"
+            ];
+        }
+
+        if ($contact->getPicture()) {
+            $pictureStatus = $this->fileUploaderService->delete($contact->getPicture());
+            if ($pictureStatus[ContactApiController::STATUS] == JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
+
+                return $pictureStatus;
+            }
+        }
+
+        $contact->setPicture(null);
+
+        $response = $this->contactRepository->createOrUpdate($contact);
+        if ($response) {
+
+            return [
+                ContactController::STATUS => JsonResponse::HTTP_OK,
+                ContactController::DATA => "Picture deleted successfully"
+            ];
+        } else {
+
+            return [
+                ContactController::STATUS => JsonResponse::HTTP_FORBIDDEN,
+                ContactController::DATA => "Picture updating failed"
             ];
         }
 

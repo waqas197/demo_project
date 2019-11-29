@@ -85,4 +85,20 @@ class ContactApiController extends Controller
 
         return $this->json($result[self::DATA], $result[self::STATUS]);
     }
+
+    /**
+     * This API endpoint delete the picture
+     *
+     * @Route("/delete/picture/{id}", methods={"DELETE"}, name="delete_contact_picture_api", requirements={"id": "\d+"})
+     *
+     * @param int $id
+     * @param ContactService $contactService
+     * @return JsonResponse
+     */
+    public function deletePictureAction(int $id, ContactService $contactService): JsonResponse
+    {
+        $result = $contactService->deletePicture($id);
+
+        return $this->json($result[self::DATA], $result[self::STATUS]);
+    }
 }

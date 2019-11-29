@@ -30,7 +30,7 @@ class ContactRepository extends ServiceEntityRepository
      * @param Contact $contact
      * @return bool
      */
-    public function create(Contact $contact): bool
+    public function createOrUpdate(Contact $contact): bool
     {
         try {
             $this->_em->persist($contact);
@@ -70,7 +70,6 @@ class ContactRepository extends ServiceEntityRepository
      */
     public function search(array $search): array
     {
-
         $query = $this->_em->createQueryBuilder()->select('c')
             ->from('AddressBookContactBundle:Contact', 'c');
 

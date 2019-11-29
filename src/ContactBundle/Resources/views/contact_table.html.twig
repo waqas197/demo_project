@@ -7,6 +7,7 @@
         <th scope="col">Phone No.</th>
         <th scope="col">Date of Birth</th>
         <th scope="col">Email ID</th>
+        <th scope="col">Detail</th>
         <th scope="col">Edit</th>
         <th scope="col">Delete</th>
     </tr>
@@ -19,7 +20,9 @@
         <tr id="{{ contact.id }}">
             <td>
                 {% if contact.picture %}
-                    <img src="{{ asset('uploads/pictures/' ~ contact.picture) }}" width="80"/>
+                    <img id="img-{{ contact.id }}" src="{{ asset('uploads/pictures/' ~ contact.picture) }}" width="80"/>
+                    <br>
+                    <a href="#" id="img-remove-link-{{ contact.id }}" onclick="removeImage({{ contact.id }})" >Remove Picture</a>
                 {% else %}
                     <img src="{{ asset('uploads/pictures/no-image.jpg') }}" width="80"/>
                 {% endif %}
@@ -30,8 +33,9 @@
             <td>{{ contact.phoneNumber }}</td>
             <td>{{ contact.dateOfBirth|date("d.m.Y") }}</td>
             <td>{{ contact.emailAddress }}</td>
-            <td><a href="contact/edit/{{ contact.id }}">Edit</a></td>
-            <td><a class='delete btn btn-danger' href="#" onclick="deleteContact({{ contact.id }})">Delete</a></td>
+            <td><a href="{{ path('detail_contact', {id: contact.id}) }}">Detail</a></td>
+            <td><a href="{{ path('edit_contact', {id: contact.id}) }}">Edit</a></td>
+            <td><a class='delete btn btn-danger' href="#" onclick="deleteContact({{ contact.id }}, '');">Delete</a></td>
         </tr>
         </tbody>
 
