@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * This class is responsible to manage picture (upload, delete etc)
+ * This service is responsible to manage picture (upload, delete)
  *
  * Class FileUploaderService
  * @package ContactBundle\Services
@@ -51,7 +51,7 @@ class FileUploaderService
     }
 
     /**
-     * This function is responsible to upload picture
+     * This method is responsible to upload picture
      *
      * @param UploadedFile $file
      * @return array
@@ -87,7 +87,7 @@ class FileUploaderService
 
 
     /**
-     *
+     *This method is responsible to delete picture
      *
      * @param $picture
      * @return array

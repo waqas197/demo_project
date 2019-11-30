@@ -9,7 +9,7 @@ use ContactBundle\Repository\ContactRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * This class is responsible to manage contacts
+ * This service responsible to manage contacts
  *
  * Class ContactService
  * @package ContactBundle\Services
@@ -66,7 +66,7 @@ class ContactService
     }
 
     /**
-     * This method used to get entity by ID
+     * This method is used to get entity by Id
      *
      * @param int $id
      * @return object|null
@@ -77,8 +77,7 @@ class ContactService
     }
 
     /**
-     * This method delete image if exists in contact
-     * return error if image not able to delete or remove entity
+     * This method is responsible to delete contact
      *
      * @param int $id
      * @return array
@@ -120,7 +119,7 @@ class ContactService
     }
 
     /**
-     * This method used to delete image and update contact entity
+     * This method is responsible to delete contact's picture
      *
      * @param int $id
      * @return array
@@ -164,7 +163,7 @@ class ContactService
     }
 
     /**
-     * This method search and response result in array
+     * This method is responsible to search contact with specific parameters.
      *
      * @param array $search
      * @return array
@@ -177,6 +176,17 @@ class ContactService
             ContactApiController::STATUS => JsonResponse::HTTP_OK,
             ContactApiController::DATA => $contact
         ];
+    }
+
+    /**
+     * This method is responsible to list all contact.
+     * @param int $from
+     * @param int $to
+     * @return mixed
+     */
+    public function getPaginatedContacts(int $from, int $to)
+    {
+        return $this->contactRepository->getContacs($from, $to);
     }
 
 }

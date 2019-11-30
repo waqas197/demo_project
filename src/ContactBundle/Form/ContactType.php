@@ -25,8 +25,7 @@ class ContactType extends AbstractType
             ->add('phone_number', TelType::class, ['required' => true])
             ->add('dateOfBirth', BirthdayType::class, ['widget' => 'single_text', 'format' => 'dd.MM.yyyy'])
             ->add('email_address', EmailType::class)
-            ->add('picture', FileType::class, ['required' => false, 'data_class' => null])
-        ;
+            ->add('picture', FileType::class, ['required' => false, 'data_class' => null]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

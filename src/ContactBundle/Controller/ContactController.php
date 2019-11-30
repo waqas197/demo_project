@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * This controller is responsible to return all responses with headers, text/html
+ *
  * @Route("/contact")
  *
  */
@@ -46,6 +48,16 @@ class ContactController extends Controller
     public const PICTURE = 'picture';
 
     /**
+     * key pass to template
+     */
+    public const FORM = 'form';
+
+    /**
+     * key pass to template
+     */
+    public const CONTACT = 'contact';
+
+    /**
      * Template for add contact
      */
     public const ADD_CONTACT_TEMPLATE = '@AddressBookContact/addContact.html.twig';
@@ -60,8 +72,15 @@ class ContactController extends Controller
      */
     public const VIEW_CONTACT_TEMPLATE = '@AddressBookContact/detailContact.html.twig';
 
+    /**
+     * Template for contact list
+     */
+    public const VIEW_CONTACT_LIST_TEMPLATE = '@AddressBookContact/listContact.html.twig';
+
 
     /**
+     * This method renders add contact page.
+     *
      * @Route("/add", methods={"GET", "POST"}, name="add_contact")
      *
      * @param Request $request
@@ -69,13 +88,17 @@ class ContactController extends Controller
      * @param FileUploaderService $fileUploaderService
      * @return Response
      */
-    public function indexAction(
+    public function addAction(
         Request $request,
         ContactService $contactService,
         FileUploaderService $fileUploaderService
     ): Response {
 
         $contact = new Contact();
+
+        /**
+         * @var FormInterface $contactForm
+         */
         $contactForm = $this->createForm(ContactType::class, $contact)->add('save', SubmitType::class);
 
         $contactForm->handleRequest($request);
@@ -90,7 +113,7 @@ class ContactController extends Controller
                     $this->addFlash(self::ERROR, $pictureUploadStatus[self::DATA]);
 
                     return $this->render(self::ADD_CONTACT_TEMPLATE, [
-                        'form' => $contactForm->createView(),
+                        self::FORM => $contactForm->createView(),
                     ]);
                 }
             }
@@ -106,11 +129,13 @@ class ContactController extends Controller
         }
 
         return $this->render(self::ADD_CONTACT_TEMPLATE, [
-            'form' => $contactForm->createView(),
+            self::FORM => $contactForm->createView(),
         ]);
     }
 
     /**
+     * This method renders edit contact page
+     *
      * @Route("/edit/{id}", methods={"GET", "POST"}, name="edit_contact", requirements={"id": "\d+"})
      *
      * @param Request $request
@@ -141,7 +166,7 @@ class ContactController extends Controller
                     $this->addFlash(self::ERROR, $pictureUploadStatus[self::DATA]);
 
                     return $this->render(self::ADD_CONTACT_TEMPLATE, [
-                        'form' => $contactForm->createView(),
+                        self::FORM => $contactForm->createView(),
                     ]);
                 }
             } else {
@@ -157,12 +182,12 @@ class ContactController extends Controller
         }
 
         return $this->render(self::ADD_CONTACT_TEMPLATE, [
-            'form' => $contactForm->createView(),
+            self::FORM => $contactForm->createView(),
         ]);
     }
 
     /**
-     * This method is used to render search contact template
+     * This method renders search contact page
      *
      * @Route("/search", methods={"GET"}, name="search_contact")
      *
@@ -175,7 +200,7 @@ class ContactController extends Controller
     }
 
     /**
-     * This method is used to render contact detail template
+     * This method renders contact detail page
      *
      * @Route("/detail/{id}", methods={"GET"}, name="detail_contact")
      *
@@ -185,7 +210,25 @@ class ContactController extends Controller
     public function detailAction(Contact $contact): Response
     {
         return $this->render(self::VIEW_CONTACT_TEMPLATE, [
-            'contact' => $contact
+            self::CONTACT => $contact
+        ]);
+    }
+
+    /**
+     * This method renders list contact page
+     *
+     * @Route("/list", methods={"GET"}, name="list_contact")
+     *
+     * @param Request $request
+     * @param ContactService $contactService
+     * @return Response
+     */
+    public function listAction(Request $request, ContactService $contactService): Response
+    {
+        $contacts = $contactService->getPaginatedContacts($request->get('page', 1), 5);
+
+        return $this->render(self::VIEW_CONTACT_LIST_TEMPLATE, [
+            'contacts' => $contacts
         ]);
     }
 

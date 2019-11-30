@@ -3,6 +3,8 @@
 namespace ContactBundle\Repository;
 
 use ContactBundle\Controller\ContactApiController;
+use Knp\Component\Pager\Paginator;
+use Psr\Container\ContainerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use ContactBundle\Entity\Contact;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -16,16 +18,23 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 class ContactRepository extends ServiceEntityRepository
 {
     /**
+     * @ContainerInterface
+     */
+    private $container;
+
+    /**
      * ProfilesRepository constructor.
      * @param RegistryInterface $registry
+     * @param ContainerInterface $container
      */
-    public function __construct(RegistryInterface $registry)
+    public function __construct(RegistryInterface $registry, ContainerInterface $container)
     {
+        $this->container = $container;
         parent::__construct($registry, Contact::class);
     }
 
     /**
-     * This method add entity into DB
+     * This method add contact entity
      *
      * @param Contact $contact
      * @return bool
@@ -44,7 +53,7 @@ class ContactRepository extends ServiceEntityRepository
     }
 
     /**
-     * This method delete contact from DB
+     * This method delete contact entity
      *
      * @param Contact $contact
      * @return bool
@@ -63,7 +72,7 @@ class ContactRepository extends ServiceEntityRepository
     }
 
     /**
-     * This method search the record from Contact and return in array format
+     * Search contact with specific filters
      *
      * @param array $search
      * @return array
@@ -92,6 +101,21 @@ class ContactRepository extends ServiceEntityRepository
         }
 
         return $query->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param int $from
+     * @param int $to
+     * @return mixed
+     */
+    public function getContacs(int $from, int $to)
+    {
+        $query = $this->_em->createQueryBuilder()
+            ->addSelect('contacts')
+            ->from('AddressBookContactBundle:Contact', 'contacts')
+            ->getQuery();
+
+        return $this->container->get('knp_paginator')->paginate($query, $from, $to);
     }
 
 }

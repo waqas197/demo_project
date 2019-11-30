@@ -9,22 +9,24 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
+ * This controller is responsible to return all responses with headers, application/json
+ *
  * @Route("/api/contact")
  */
 class ContactApiController extends Controller
 {
     /**
-     * search API parameter for search i.e First Name, Last Name
+     * search parameter for search i.e First Name, Last Name
      */
     const NAME = 'contactName';
 
     /**
-     * search API parameter for Email ID
+     * search parameter for Email ID
      */
     const EMAIL = 'contactEmail';
 
     /**
-     * search API parameter for search i.e street, zip, city, country
+     * search parameter for search i.e street, zip, city, country
      */
     const ADDRESS = 'contactAddress';
 
@@ -44,8 +46,7 @@ class ContactApiController extends Controller
     public const CONTACT_LISTING_TEMPLATE = '@AddressBookContact/contact_table.html.twig';
 
     /**
-     * This API endpoint returns search and return result json format.
-     * Data contains html response from contact_table twig template.
+     * Search contact with specific filters.
      *
      * @Route("/search", methods={"GET"}, name="search_contact_api")
      *
@@ -71,7 +72,7 @@ class ContactApiController extends Controller
     }
 
     /**
-     * This API endpoint delete the contact by ID
+     * Delete contact.
      *
      * @Route("/delete/{id}", methods={"DELETE"}, name="delete_contact_api", requirements={"id": "\d+"})
      *
@@ -87,7 +88,7 @@ class ContactApiController extends Controller
     }
 
     /**
-     * This API endpoint delete the picture
+     * Delete contact picture
      *
      * @Route("/delete/picture/{id}", methods={"DELETE"}, name="delete_contact_picture_api", requirements={"id": "\d+"})
      *
