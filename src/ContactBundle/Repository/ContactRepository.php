@@ -100,6 +100,8 @@ class ContactRepository extends ServiceEntityRepository
                 ->setParameter(ContactApiController::EMAIL, '%' . $search[ContactApiController::EMAIL] . '%');
         }
 
+
+
         return $query->getQuery()->getArrayResult();
     }
 
@@ -108,12 +110,13 @@ class ContactRepository extends ServiceEntityRepository
      * @param int $to
      * @return mixed
      */
-    public function getContacs(int $from, int $to)
+    public function getContacts(int $from, int $to)
     {
         $query = $this->_em->createQueryBuilder()
             ->addSelect('contacts')
             ->from('AddressBookContactBundle:Contact', 'contacts')
             ->getQuery();
+
 
         return $this->container->get('knp_paginator')->paginate($query, $from, $to);
     }

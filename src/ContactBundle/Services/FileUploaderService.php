@@ -3,7 +3,7 @@
 namespace ContactBundle\Services;
 
 use ContactBundle\Controller\ContactController;
-use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -59,7 +59,8 @@ class FileUploaderService
     public function upload(UploadedFile $file): array
     {
         $supportedImageTypes = $this->container->getParameter(self::IMG_TYPE_PARAM);
-        if (!\in_array($file->guessExtension(), $supportedImageTypes)) {
+        $fileExtension = $file->guessExtension();
+        if (!\in_array($fileExtension, $supportedImageTypes)) {
 
             return [
                 ContactController::STATUS => JsonResponse::HTTP_FORBIDDEN,
@@ -67,7 +68,7 @@ class FileUploaderService
             ];
         }
 
-        $fileName = \uniqid() . '.' . $file->guessExtension();
+        $fileName = \uniqid() . '.' . $fileExtension;
         try {
             $targetDirectory = $this->container->getParameter(self::PICTURE_DIR_PARAM);
             $file->move($targetDirectory, $fileName);
@@ -95,9 +96,8 @@ class FileUploaderService
     public function delete($picture): array
     {
         try {
-            $file = new Filesystem();
             $path = $this->container->getParameter(self::PICTURE_DIR_PARAM) . "/" . $picture;
-            $file->remove($path);
+            $this->file->remove($path);
             return [
                 ContactController::STATUS => JsonResponse::HTTP_OK,
                 ContactController::DATA => "File removed"

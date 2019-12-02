@@ -36,7 +36,8 @@ class ContactService
     public function __construct(
         FileUploaderService $fileUploaderService,
         ContactRepository $contactRepository
-    ) {
+    )
+    {
         $this->fileUploaderService = $fileUploaderService;
         $this->contactRepository = $contactRepository;
     }
@@ -84,6 +85,9 @@ class ContactService
      */
     public function delete(int $id): array
     {
+        /**
+         * @var Contact $contact
+         */
         $contact = $this->contactRepository->find($id);
         if ($contact == null) {
 
@@ -93,8 +97,9 @@ class ContactService
             ];
         }
 
-        if ($contact->getPicture()) {
-            $pictureStatus = $this->fileUploaderService->delete($contact->getPicture());
+        $picture = $contact->getPicture();
+        if ($picture) {
+            $pictureStatus = $this->fileUploaderService->delete($picture);
             if ($pictureStatus[ContactApiController::STATUS] == JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
 
                 return $pictureStatus;
@@ -126,6 +131,9 @@ class ContactService
      */
     public function deletePicture(int $id): array
     {
+        /**
+         * @var Contact $contact
+         */
         $contact = $this->contactRepository->find($id);
         if ($contact == null) {
 
@@ -135,30 +143,34 @@ class ContactService
             ];
         }
 
-        if ($contact->getPicture()) {
-            $pictureStatus = $this->fileUploaderService->delete($contact->getPicture());
-            if ($pictureStatus[ContactApiController::STATUS] == JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
-
-                return $pictureStatus;
-            }
+        $picture = $contact->getPicture();
+        if ($picture === null) {
+            return [
+                ContactApiController::STATUS => JsonResponse::HTTP_FORBIDDEN,
+                ContactApiController::DATA => "Picture not found"
+            ];
         }
 
+        $pictureStatus = $this->fileUploaderService->delete($picture);
+        if ($pictureStatus[ContactApiController::STATUS] == JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
+
+            return $pictureStatus;
+        }
         $contact->setPicture(null);
 
         $response = $this->contactRepository->createOrUpdate($contact);
-        if ($response) {
+        if ($response === false) {
 
             return [
-                ContactController::STATUS => JsonResponse::HTTP_OK,
-                ContactController::DATA => "Picture deleted successfully"
-            ];
-        } else {
-
-            return [
-                ContactController::STATUS => JsonResponse::HTTP_FORBIDDEN,
-                ContactController::DATA => "Picture updating failed"
+                ContactApiController::STATUS => JsonResponse::HTTP_FORBIDDEN,
+                ContactApiController::DATA => "Picture updating failed"
             ];
         }
+
+        return [
+            ContactApiController::STATUS => JsonResponse::HTTP_OK,
+            ContactApiController::DATA => "Picture deleted successfully"
+        ];
 
     }
 
@@ -186,7 +198,7 @@ class ContactService
      */
     public function getPaginatedContacts(int $from, int $to)
     {
-        return $this->contactRepository->getContacs($from, $to);
+        return $this->contactRepository->getContacts($from, $to);
     }
 
 }

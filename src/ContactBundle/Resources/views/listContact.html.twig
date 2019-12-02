@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 {% block title %}
-    List Contact {{ parent() }}
+    Contact Overview {{ parent() }}
 {% endblock %}
 
 {% block body %}
@@ -10,19 +10,19 @@
             <div class="col-sm-2">&nbsp;</div>
 
             <div class="col-sm-8 text-left">
-                <h1>Contact List</h1>
+                <h1>Contact Overview</h1>
 
                 {% for contact in contacts %}
                 <hr>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             {% if (contact.picture) %}
                                 <img id="img-{{ contact.id }}" src="{{ asset('uploads/pictures/' ~ contact.picture) }}" width="300"/>
                             {% else %}
                                 <img src="{{ asset('uploads/pictures/no-image.jpg') }}" width="300"/>
                             {% endif %}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-7">
                             <table class="table table-sm">
                                 <tr>
                                     <th scope="row">First Name: </th>

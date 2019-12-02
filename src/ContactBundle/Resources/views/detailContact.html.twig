@@ -13,7 +13,7 @@
                 <h1>Contact Detail</h1>
                 <hr>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             {% if (contact.picture) %}
                             <img id="img-{{ contact.id }}" src="{{ asset('uploads/pictures/' ~ contact.picture) }}" width="300"/>
                             <br>
@@ -22,7 +22,7 @@
                                 <img src="{{ asset('uploads/pictures/no-image.jpg') }}" width="300"/>
                             {% endif %}
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <table class="table table-sm">
                                 <tr>
                                     <th scope="row">First Name: </th>
